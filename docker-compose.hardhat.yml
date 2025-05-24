@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  hardhat:
+    build:
+      context: .
+      dockerfile: hardhat.Dockerfile
+    container_name: hardhat_node
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./shared:/code/shared
+    command: >
+      sh -c "
+      npx hardhat node > /dev/null &
+      sleep 6 && npx hardhat compile &&
+      npx hardhat run blockchain/scripts/deploy.js --network localhost &&
+      tail -f /dev/null"

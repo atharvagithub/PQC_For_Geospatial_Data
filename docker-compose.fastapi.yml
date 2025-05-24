@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - BLOCKCHAIN_PROVIDER=http://127.0.0.1:8545
+      - PRIVATE_KEY=0xYOUR_PRIVATE_KEY
+
