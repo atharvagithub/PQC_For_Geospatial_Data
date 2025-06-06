@@ -2,18 +2,28 @@ import hashlib
 from web3 import Web3
 from web3.exceptions import ContractLogicError
 from .config import get_contract, get_web3, PRIVATE_KEY
+from fastapi import Request
+from app.infrastructure.session_manager import get_private_key_from_cookie
 
 
 class blockchain_connector:
-    def __init__(self):
+#    def __init__(self):
+#        self.contract, self.web3 = get_contract()
+#
+#        if PRIVATE_KEY:
+#            self.account = self.web3.eth.account.from_key(PRIVATE_KEY)
+#            print(f"Using account: {self.account.address}")
+#        else:
+#            self.account = None
+#            print("Warning: No private key provided. Only read operations will work.")
+            
+    def __init__(self, request: Request):
         self.contract, self.web3 = get_contract()
-
-        if PRIVATE_KEY:
-            self.account = self.web3.eth.account.from_key(PRIVATE_KEY)
-            print(f"Using account: {self.account.address}")
-        else:
-            self.account = None
-            print("Warning: No private key provided. Only read operations will work.")
+        private_key = get_private_key_from_cookie(request)
+        if not private_key:
+            raise ValueError("You must be logged in to perform this action")
+        self.account = self.web3.eth.account.from_key(private_key)
+        print(f"[AUTH] Acting as {self.account.address}")    
 
     def _build_txn(self, function):
         if not self.account:

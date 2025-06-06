@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel
 from typing import Optional
 import os
@@ -26,10 +26,10 @@ router = APIRouter(prefix="/api/blockchain", tags=["Blockchain"])
 
 
 @router.post("/store")
-async def store_on_blockchain(request: StoreRequest):
+async def store_on_blockchain(request: StoreRequest, req: Request):
     """Store encrypted data reference on the blockchain"""
     try:
-        blockchain_service = blockchain_connector()
+        blockchain_service = blockchain_connector(req)
 
         # Generate data ID if not provided
         data_id = request.data_id or blockchain_service.generate_data_id(request.cid_hash, int(time.time()))
@@ -56,10 +56,10 @@ async def store_on_blockchain(request: StoreRequest):
 
 
 @router.get("/retrieve/{data_id}")
-async def retrieve_from_blockchain(data_id: str):
+async def retrieve_from_blockchain(data_id: str, req: Request):
     """Retrieve data reference from the blockchain"""
     try:
-        blockchain_service = blockchain_connector()
+        blockchain_service = blockchain_connector(req)
 
         cid_hash, aes_iv, aes_tag, kem_cyphertext, timestamp, owner = blockchain_service.retrieve_encrypted_data(data_id)
 
@@ -79,11 +79,11 @@ async def retrieve_from_blockchain(data_id: str):
 
 
 @router.post("/access/grant")
-async def grant_access(request: AccessRequest):
+async def grant_access(request: AccessRequest, req: Request):
     try:
         request.data_id = request.data_id.strip()
         request.address = request.address.strip()
-        blockchain_service = blockchain_connector()
+        blockchain_service = blockchain_connector(req)
         receipt = blockchain_service.grant_access(request.data_id, request.address)
 
         return {
@@ -97,11 +97,11 @@ async def grant_access(request: AccessRequest):
 
 
 @router.post("/access/revoke")
-async def revoke_access(request: AccessRequest):
+async def revoke_access(request: AccessRequest, req: Request):
     try:
         request.data_id = request.data_id.strip()
         request.address = request.address.strip()
-        blockchain_service = blockchain_connector()
+        blockchain_service = blockchain_connector(req)
         receipt = blockchain_service.revoke_access(request.data_id, request.address)
 
         return {
@@ -115,11 +115,11 @@ async def revoke_access(request: AccessRequest):
 
 
 @router.get("/access/check")
-async def check_access(data_id: str, address: str):
+async def check_access(data_id: str, address: str, req: Request):
     try:
         data_id = data_id.strip()
         address = address.strip()
-        blockchain_service = blockchain_connector()
+        blockchain_service = blockchain_connector(req)
         has_access = blockchain_service.check_access(data_id, address)
 
         return {
@@ -133,9 +133,9 @@ async def check_access(data_id: str, address: str):
 
 
 @router.get("/data")
-async def get_data_ids(owned: bool = Query(False, description="Whether to return only data IDs owned by the caller")):
+async def get_data_ids(req: Request, owned: bool = Query(False, description="Whether to return only data IDs owned by the caller")):
     try:
-        blockchain_service = blockchain_connector()
+        blockchain_service = blockchain_connector(req)
         data_ids = blockchain_service.get_my_data_ids() if owned else blockchain_service.get_all_data_ids()
 
         return {
