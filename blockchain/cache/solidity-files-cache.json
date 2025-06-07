@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "D:\\PQC_Geospatial\\blockchain\\contracts\\CRUDStorage.sol": {
+    "/app/blockchain/contracts/CRUDStorage.sol": {
       "lastModificationDate": 1748001050864,
       "contentHash": "47551f79eccd89858cd260f7f9bac0d3",
       "sourceName": "contracts/CRUDStorage.sol",
@@ -37,7 +37,7 @@
         "CRUDStorage"
       ]
     },
-    "D:\\PQC_Geospatial\\blockchain\\contracts\\GeoDataStorage.sol": {
+    "/app/blockchain/contracts/GeoDataStorage.sol": {
       "lastModificationDate": 1748081558798,
       "contentHash": "cd4196ae53e85159281efe5873b5d16f",
       "sourceName": "contracts/GeoDataStorage.sol",

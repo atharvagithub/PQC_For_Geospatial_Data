@@ -1,0 +1,16 @@
+FROM python:3.12
+
+# Install Node.js and npm
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["sh", "-c", "sleep 5 && npx hardhat run blockchain/scripts/deploy.js --network localhost && uvicorn main:app --host 0.0.0.0 --port 8000"]

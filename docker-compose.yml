@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "8545:8545"  # expose Hardhat node if needed
+    environment:
+      - BLOCKCHAIN_PROVIDER=http://127.0.0.1:8545
+      - SESSION_SECRET_KEY=ulJl6A9el1ZEuWTD958cO76T5Id3dUkKoXCKRSQG5cOO5lavR22x74paSeWfghiVCGZOElqsv7zdg5jdS3MgnA
+    volumes:
+      - .:/app

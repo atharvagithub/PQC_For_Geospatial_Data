@@ -15,14 +15,14 @@ class blockchain_connector:
 #            print(f"Using account: {self.account.address}")
 #        else:
 #            self.account = None
-#            print("Warning: No private key provided. Only read operations will work.")
+#            print("Warning: No private key provided. Only read operations will work.") 
             
     def __init__(self, request: Request):
         self.contract, self.web3 = get_contract()
-        private_key = get_private_key_from_cookie(request)
-        if not private_key:
+        self.private_key = get_private_key_from_cookie(request)
+        if not self.private_key:
             raise ValueError("You must be logged in to perform this action")
-        self.account = self.web3.eth.account.from_key(private_key)
+        self.account = self.web3.eth.account.from_key(self.private_key)
         print(f"[AUTH] Acting as {self.account.address}")    
 
     def _build_txn(self, function):
@@ -41,7 +41,7 @@ class blockchain_connector:
         return txn
 
     def _sign_and_send_txn(self, txn):
-        signed_txn = self.web3.eth.account.sign_transaction(txn, PRIVATE_KEY)
+        signed_txn = self.web3.eth.account.sign_transaction(txn, self.private_key)
         tx_hash = self.web3.eth.send_raw_transaction(signed_txn.raw_transaction)
         return self.web3.eth.wait_for_transaction_receipt(tx_hash)
 
