@@ -99,6 +99,8 @@ docker run -p 8000:8000 pqc-python-backend
 - First run the frontend by enterring command "npm start"
 - Second start the docker file by the command "docker compose up -d"
 
+NOTE - project-setup branch is the latest branch
+
 License
 -------
 MIT License – For research and educational use only.
